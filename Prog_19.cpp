@@ -1,87 +1,80 @@
 #include <iostream>
-#include <stdexcept>
-
-const int MAX_SIZE = 100;
+#include <fstream>
+#include <stack>
+#include <string>
 
 class Stack {
 public:
-    Stack() : size(0) {}
-
-    void push(int element) {
-        if (size >= MAX_SIZE) {
-            throw std::overflow_error("Stack is full");
-        }
-
-        data[size++] = element;
-    }
-
-    void pop() {
-        if (isEmpty()) {
-            throw std::underflow_error("Stack is empty");
-        }
-
-        --size;
-    }
-
-    int top() const {
-        if (isEmpty()) {
-            throw std::underflow_error("Stack is empty");
-        }
-
-        return data[size - 1];
-    }
-
     bool isEmpty() const {
-        return size == 0;
+        return elements.empty();
     }
 
     bool isFull() const {
-        return size == MAX_SIZE;
+        // Assuming the stack has unlimited capacity
+        return false;
     }
 
-    int getSize() const {
-        return size;
+    int size() const {
+        return elements.size();
     }
 
-    Stack operator+(int element) {
-        push(element);
-        return *this;
+    void push(char element) {
+        elements.push(element);
     }
 
-    Stack operator-(int element) {
-        pop();
-        return *this;
+    char pop() {
+        char topElement = elements.top();
+        elements.pop();
+        return topElement;
     }
 
 private:
-    int data[MAX_SIZE];
-    int size;
+    std::stack<char> elements;
 };
 
-int main() {
+bool isBalanced(const std::string& text) {
     Stack stack;
+    
+    for (char c : text) {
+        if (c == '(' || c == '<') {
+            stack.push(c);
+        } else if (c == ')' || c == '>') {
+            if (stack.isEmpty()) {
+                return false;
+            }
+            char topElement = stack.pop();
+            if ((c == ')' && topElement != '(') || (c == '>' && topElement != '<')) {
+                return false;
+            }
+        }
+    }
+    
+    return stack.isEmpty();
+}
 
-    std::cout << "Pushing elements into the stack..." << std::endl;
-    stack.push(10);
-    stack.push(20);
-    stack.push(30);
-
-    std::cout << "Stack size: " << stack.getSize() << std::endl;
-
-    std::cout << "Top element: " << stack.top() << std::endl;
-
-    std::cout << "Popping an element from the stack..." << std::endl;
-    stack.pop();
-
-    std::cout << "Stack size: " << stack.getSize() << std::endl;
-
-    std::cout << "Adding an element to the stack using operator+" << std::endl;
-    stack = stack + 40;
-    std::cout << "Stack size: " << stack.getSize() << std::endl;
-
-    std::cout << "Removing an element from the stack using operator-" << std::endl;
-    stack = stack - 40;
-    std::cout << "Stack size: " << stack.getSize() << std::endl;
-
+int main() {
+    std::string filename = "text.txt";
+    std::ifstream file(filename);
+    
+    if (!file) {
+        std::cout << "Failed to open file." << std::endl;
+        return 1;
+    }
+    
+    std::string text;
+    std::string line;
+    while (getline(file, line)) {
+        text += line;
+    }
+    
+    file.close();
+    
+    bool balanced = isBalanced(text);
+    if (balanced) {
+        std::cout << "The text in the file is balanced." << std::endl;
+    } else {
+        std::cout << "The text in the file is not balanced." << std::endl;
+    }
+    
     return 0;
 }
