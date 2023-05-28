@@ -1,80 +1,34 @@
 #include <iostream>
-#include <fstream>
-#include <stack>
-#include <string>
 
-class Stack {
-public:
-    bool isEmpty() const {
-        return elements.empty();
+template<typename T>
+T calculateAverage(T arr[], int size) {
+    T sum = 0;
+    for (int i = 0; i < size; ++i) {
+        sum += arr[i];
     }
-
-    bool isFull() const {
-        // Assuming the stack has unlimited capacity
-        return false;
-    }
-
-    int size() const {
-        return elements.size();
-    }
-
-    void push(char element) {
-        elements.push(element);
-    }
-
-    char pop() {
-        char topElement = elements.top();
-        elements.pop();
-        return topElement;
-    }
-
-private:
-    std::stack<char> elements;
-};
-
-bool isBalanced(const std::string& text) {
-    Stack stack;
-    
-    for (char c : text) {
-        if (c == '(' || c == '<') {
-            stack.push(c);
-        } else if (c == ')' || c == '>') {
-            if (stack.isEmpty()) {
-                return false;
-            }
-            char topElement = stack.pop();
-            if ((c == ')' && topElement != '(') || (c == '>' && topElement != '<')) {
-                return false;
-            }
-        }
-    }
-    
-    return stack.isEmpty();
+    return sum / size;
 }
 
 int main() {
-    std::string filename = "text.txt";
-    std::ifstream file(filename);
-    
-    if (!file) {
-        std::cout << "Failed to open file." << std::endl;
-        return 1;
-    }
-    
-    std::string text;
-    std::string line;
-    while (getline(file, line)) {
-        text += line;
-    }
-    
-    file.close();
-    
-    bool balanced = isBalanced(text);
-    if (balanced) {
-        std::cout << "The text in the file is balanced." << std::endl;
-    } else {
-        std::cout << "The text in the file is not balanced." << std::endl;
-    }
-    
+    int intArr[] = {1, 2, 3, 4, 5};
+    int intArrSize = sizeof(intArr) / sizeof(int);
+    int intAverage = calculateAverage(intArr, intArrSize);
+    std::cout << "Average of int array: " << intAverage << std::endl;
+
+    long longArr[] = {1000, 2000, 3000, 4000, 5000};
+    int longArrSize = sizeof(longArr) / sizeof(long);
+    long longAverage = calculateAverage(longArr, longArrSize);
+    std::cout << "Average of long array: " << longAverage << std::endl;
+
+    double doubleArr[] = {1.5, 2.5, 3.5, 4.5, 5.5};
+    int doubleArrSize = sizeof(doubleArr) / sizeof(double);
+    double doubleAverage = calculateAverage(doubleArr, doubleArrSize);
+    std::cout << "Average of double array: " << doubleAverage << std::endl;
+
+    char charArr[] = {'a', 'b', 'c', 'd', 'e'};
+    int charArrSize = sizeof(charArr) / sizeof(char);
+    char charAverage = calculateAverage(charArr, charArrSize);
+    std::cout << "Average of char array: " << charAverage << std::endl;
+
     return 0;
 }
